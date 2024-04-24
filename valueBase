@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class CW3_valueBase {
+public class valueBase {
     private static int width = 20; // Width of a rectangle
     private static int startX_L = 110; // The position at which the left rectangle begins
     private static int startX_curve = startX_L + width; // The x-coordinate of the beginning of the Bezier curve
