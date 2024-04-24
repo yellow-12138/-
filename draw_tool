@@ -2,7 +2,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class CW3_drawingTool extends CW3_reader{
+public class drawingTool extends reader {
     public void drawRectangle(double startX, double startY, double width, double height, Color color) {
         //Draw the beginning and end rectangles
         Rectangle totalExpensesRect = new Rectangle(startX, startY, width, height);
