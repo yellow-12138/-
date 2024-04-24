@@ -1,0 +1,42 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+public class CW3_reader extends CW3_valueBase{
+    private int temp = getTotal();
+    public static String[] readFirstTwoLines(String filename) {
+        String[] lines = new String[2];
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            lines[0] = br.readLine(); // Read the first line
+            lines[1] = br.readLine(); // Read the second line
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return lines;
+    }
+
+    public Map<String, Integer> readDataIntoMap(String filename) throws Exception {
+        Map<String, Integer> dataMap = new HashMap<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            // Skip the first two lines
+            br.readLine();
+            br.readLine();
+
+            String line;
+            while ((line = br.readLine()) != null) {
+                int space = line.lastIndexOf(' ');
+                int expense = Integer.parseInt(line.substring(space + 1));
+                temp += expense;
+                dataMap.put(line.substring(0, space), expense);
+            }
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+        }
+        setTotal(temp);
+        return dataMap;
+    }
+
+}
