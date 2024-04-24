@@ -1,0 +1,35 @@
+import pandas as pd
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+df = pd.read_excel('CW_Data.xlsx')
+
+features = df.drop(['Index', 'Programme'], axis=1)
+
+scaler = StandardScaler()
+features_scaled = scaler.fit_transform(features)
+
+pca = PCA(n_components=2)
+features_pca = pca.fit_transform(features_scaled)
+
+print('Explained variance ratio:', pca.explained_variance_ratio_)
+
+total_labels = df['Total']
+
+unique_labels = np.unique(total_labels)
+colors = plt.cm.jet(np.linspace(0, 1, len(unique_labels)))
+
+plt.figure(figsize=(10, 7))
+for i, label in enumerate(unique_labels):
+    idx = total_labels == label
+    plt.scatter(features_pca[idx, 0], features_pca[idx, 1], c=[colors[i]], label=f'Total {label}', alpha=0.7, edgecolors='w')
+
+plt.title('PCA of Dataset by Total')
+plt.xlabel('Principal Component 1')
+plt.ylabel('Principal Component 2')
+plt.legend()
+plt.grid(True)
+plt.show()
