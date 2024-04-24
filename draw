@@ -1,0 +1,119 @@
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.LinkedHashMap;
+
+public class CW3_draw extends CW3_drawingTool{
+    private boolean containsDigits(String str) {
+        for (char c : str.toCharArray()) {
+            if (Character.isDigit(c)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    @Override
+    public Map<String, Integer> readDataIntoMap(String filename) throws Exception{
+        Map<String, Integer> dataMap = new HashMap<>();
+        int temp = getTotal();
+        int lineNumber = 0; // Track the line number
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                lineNumber++; // Increment line number
+
+                // Skip title lines
+                if (lineNumber <= 2) {
+                    continue;
+                }
+
+                String[] parts = line.split(" ");
+                if (parts.length < 2) {
+                    System.out.println("Formatting error in line " + lineNumber + ": " + line);
+                    continue; // Skip this line and move to the next one
+                }
+
+                try {
+                    // Attempt to parse the last part as the expense
+                    int expense = Integer.parseInt(parts[parts.length - 1].trim());
+
+                    // Combine the remaining parts as the item name
+                    String itemName = String.join(" ", Arrays.copyOf(parts, parts.length - 1));
+
+                    // Check if the item name contains any digits
+                    if (containsDigits(itemName)) {
+                        System.out.println("Item name error in line " + lineNumber + ": " + line);
+                        continue;
+                    }
+
+                    temp += expense;
+                    dataMap.put(itemName, expense);
+                } catch (NumberFormatException e) {
+                    System.out.println("Number format error in line " + lineNumber + ": " + line);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred while reading the file: " + e.getMessage());
+        }
+        setTotal(temp);
+        return dataMap.entrySet().stream().sorted(Map.Entry.comparingByValue())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+        //Sorting data with a LinkedHashMap (optional)
+    }
+    public void drawShapes() {
+        GraphicsContext gc = getCanvas().getGraphicsContext2D();
+
+        // Clear the canvas
+        gc.clearRect(0, 0, getCanvas().getWidth(), getCanvas().getHeight());
+        getRoot().getChildren().clear();
+        // Sometimes the data in the file is so large that the image will overwhelm the screen,
+        // so we need to shrink the image
+        double totalHeight = (getTotal() + (CW3_valueBase.getExpenses().size()) * getDistance() + getStartY());
+        double scale = 1;
+        if (totalHeight > getFrameSize()) {
+            scale = totalHeight / getFrameSize();
+        }
+        Text titleText = new Text(35, 35, getFirstTwoLines()[0]);
+        titleText.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+        getRoot().getChildren().add(titleText);
+        // Left rectangle and text label
+        drawRectangle(getStartXLeft(), getStartY() + getDistance() * getExpenses().size() / 2.0,
+                getWidth(), getTotal() / scale,
+                Color.BLUE.deriveColor(0, 1, 2.0, 0.5));
+        Text totalText = new Text(getStartXLeft() - 95, getStartY() + getDistance() * getExpenses().size() / 2.0 + getTotal() / scale / 2.0, getFirstTwoLines()[1] + ": " + getTotal());
+        getRoot().getChildren().add(totalText);
+
+        double startYR = getStartY();
+        double startYL = getStartY() + getDistance() * getExpenses().size() / 2.0;
+        int colorIndex = 0;
+        for (Map.Entry<String, Integer> entry : getExpenses().entrySet()) {
+            // Draw the Bezier curve
+            drawBezierCurve(getStartXCurve(), startYL, getStartXRight(), startYR, (entry.getValue() / scale), getColors().get(colorIndex));
+            // Right rectangle and text label
+            drawRectangle(getStartXRight(), startYR, getWidth(), (entry.getValue() / scale),
+                    getColors().get(colorIndex).deriveColor(0, 1, 0.5, 1));
+            Text expenseText = new Text(getStartXRight() + getTextOffset(), startYR + (entry.getValue() / scale) / 2.0, entry.getKey() + ": " + entry.getValue());
+            getRoot().getChildren().add(expenseText);
+            // Update the next startY
+            startYR += (entry.getValue() / scale);
+            startYL += (entry.getValue() / scale);
+            startYR += getDistance();
+            colorIndex = (colorIndex + 1) % getColors().size();
+        }
+        getRoot().getChildren().add(getCanvas());
+
+    }
+}
