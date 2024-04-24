@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.LinkedHashMap;
 
-public class CW3_draw extends CW3_drawingTool{
+public class draw extends drawingTool {
     private boolean containsDigits(String str) {
         for (char c : str.toCharArray()) {
             if (Character.isDigit(c)) {
@@ -81,7 +81,7 @@ public class CW3_draw extends CW3_drawingTool{
         getRoot().getChildren().clear();
         // Sometimes the data in the file is so large that the image will overwhelm the screen,
         // so we need to shrink the image
-        double totalHeight = (getTotal() + (CW3_valueBase.getExpenses().size()) * getDistance() + getStartY());
+        double totalHeight = (getTotal() + (valueBase.getExpenses().size()) * getDistance() + getStartY());
         double scale = 1;
         if (totalHeight > getFrameSize()) {
             scale = totalHeight / getFrameSize();
