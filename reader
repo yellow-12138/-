@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CW3_reader extends CW3_valueBase{
+public class reader extends valueBase {
     private int temp = getTotal();
     public static String[] readFirstTwoLines(String filename) {
         String[] lines = new String[2];
