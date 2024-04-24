@@ -1,0 +1,28 @@
+import pandas as pd
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
+import numpy as np
+
+df = pd.read_excel('CW_Data.xlsx')
+
+features = df.drop(['Index', 'Programme'], axis=1)
+
+pca = PCA(n_components=2)
+features_pca = pca.fit_transform(features)  
+
+print('Explained variance ratio:', pca.explained_variance_ratio_)
+
+program_labels = df['Programme']
+colors = {1: 'red', 2: 'green', 3: 'blue', 4: 'purple'}  
+
+plt.figure(figsize=(10, 7))
+for program in np.unique(program_labels):
+    idx = program_labels == program
+    plt.scatter(features_pca[idx, 0], features_pca[idx, 1], c=colors[program], label=f'Program {program}', alpha=0.7, edgecolors='w')
+
+plt.title('PCA of Dataset by Program Without Standardization')
+plt.xlabel('Principal Component 1')
+plt.ylabel('Principal Component 2')
+plt.legend()
+plt.grid(True)
+plt.show()
