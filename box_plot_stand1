@@ -1,0 +1,20 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+
+df = pd.read_excel('CW_Data.xlsx')
+
+def mean_normalization(series):
+    return (series - series.mean()) / (series.max() - series.min())
+
+df_normalized = df.select_dtypes(include=[np.number]).apply(mean_normalization)
+data_to_plot = [df_normalized[col].dropna() for col in df_normalized]
+
+plt.figure(figsize=(10, 8))
+plt.boxplot(data_to_plot)
+
+plt.xticks([i + 1 for i in range(len(data_to_plot))], [col for col in df_normalized])
+plt.ylabel('Normalized values')
+plt.title('Box plot of all columns in the dataframe (Mean Normalized)')
+plt.grid(True)
+plt.show()
