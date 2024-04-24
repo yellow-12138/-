@@ -1,0 +1,14 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_excel('CW_Data.xlsx')
+data_to_plot = [df[col].dropna() for col in df.columns if df[col].dtype != 'object']
+
+plt.figure(figsize=(10, 8))
+plt.boxplot(data_to_plot)
+
+plt.xticks([i + 1 for i in range(len(data_to_plot))], [col for col in df.columns if df[col].dtype != 'object'])
+plt.ylabel('Values')
+plt.title('Box plot of all columns in the dataframe')
+plt.grid(True)
+plt.show()
