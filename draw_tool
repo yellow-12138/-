@@ -1,0 +1,29 @@
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+
+public class CW3_drawingTool extends CW3_reader{
+    public void drawRectangle(double startX, double startY, double width, double height, Color color) {
+        //Draw the beginning and end rectangles
+        Rectangle totalExpensesRect = new Rectangle(startX, startY, width, height);
+        totalExpensesRect.setFill(color);
+        getRoot().getChildren().add(totalExpensesRect);
+
+    }
+    public void drawBezierCurve(double beginX, double beginY, double endX, double endY, double arrowWidth, Color color) {
+        // Draw the Bezier curve
+        GraphicsContext gc = getCanvas().getGraphicsContext2D();
+        gc.setFill(color);
+        gc.beginPath();
+        gc.lineTo(endX, endY);
+        //Use a cubic Bezier curve, which is much smoother
+        gc.bezierCurveTo((3 * endX + beginX) / 4, endY,
+                (endX + 3 * beginX) / 4, beginY, beginX, beginY);
+        gc.lineTo(beginX, beginY + arrowWidth);
+        gc.bezierCurveTo((3 * beginX + endX) / 4, beginY + arrowWidth,
+                (beginX + 3 * endX) / 4, endY + arrowWidth, endX, endY + arrowWidth);
+        gc.lineTo(endX, endY);
+        gc.closePath();
+        gc.fill();
+    }
+}
