@@ -1,0 +1,18 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy.stats import zscore
+
+df = pd.read_excel('CW_Data.xlsx')
+
+df_standardized = df.select_dtypes(include=[np.number]).apply(zscore)
+data_to_plot = [df_standardized[col].dropna() for col in df_standardized]
+
+plt.figure(figsize=(10, 8))
+plt.boxplot(data_to_plot)
+
+plt.xticks([i + 1 for i in range(len(data_to_plot))], [col for col in df_standardized])
+plt.ylabel('Z-scores')
+plt.title('Box plot of all columns in the dataframe (Standardized)')
+plt.grid(True)
+plt.show()
