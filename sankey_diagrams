@@ -1,0 +1,38 @@
+import javafx.application.Application;
+import javafx.stage.Stage;
+import java.util.Scanner;
+
+public class sankey_diagrams extends Application {
+
+    draw draw = new draw();
+
+    @Override
+    public void start(Stage primaryStage) throws Exception{
+        Scanner sc = new Scanner(System.in);
+        String filename = sc.next() + ".txt";
+        // read from file
+        draw.setFirstTwoLines(draw.readFirstTwoLines(filename));
+        System.out.println("Title: " + draw.getFirstTwoLines()[0]);
+        System.out.println("SubTitle: " + draw.getFirstTwoLines()[1]);
+        valueBase.setExpenses(draw.readDataIntoMap(filename));
+        System.out.println("Data Map: " + draw.getExpenses());
+        // Redraw the size of the window
+        draw.getScene().widthProperty().addListener((obs, oldWidth, newWidth) -> {
+            valueBase.setStartXRight(newWidth.doubleValue() - 200);
+            draw.drawShapes();
+        });
+        draw.getScene().heightProperty().addListener((obs, oldHeight, newHeight) -> {
+            valueBase.setPlotSize(newHeight.doubleValue() - 180);
+            draw.drawShapes();
+        });
+        // Generate the image for the first time
+        draw.drawShapes();
+
+        primaryStage.setTitle("Sankey Diagram of " + draw.getFirstTwoLines()[0]);
+        primaryStage.setScene(draw.getScene());
+        primaryStage.show();
+    }
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
